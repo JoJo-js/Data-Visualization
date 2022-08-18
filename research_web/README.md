@@ -1,5 +1,3 @@
-# research
-开发工具 visual studio code
 ## Project setup
 ```
 npm install
