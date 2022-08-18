@@ -53,6 +53,7 @@ def er():
     table_list = list(map(lambda x: x[0], result))
     if 'fund_user_table' in table_list:
         table_list.remove('fund_user_table')
+        table_list.remove('located')
     link = []
     # print(table_list)
     for i in range(len(table_list)):
@@ -95,8 +96,9 @@ def er():
                     foreign_key.append(foreign[k])
         foreign_key = set(foreign_key)
         primary_key = set(primary_key)
+        # print(foreign_key, primary_key)
         intersection = list(foreign_key & primary_key)
-        if len(intersection) > 0 and len(isrelation) > 1:
+        if len(isrelation) > 1 and len(intersection) > 0:
             if foreign_key.issuperset(primary_key):
                 nodetype = 'mtom'
             else:
@@ -104,16 +106,17 @@ def er():
         else:
             if foreign_key == primary_key:
                 nodetype = 'subset'
-            elif primary_key.issuperset(foreign_key):
+            elif primary_key.issuperset(foreign_key) and len(foreign_key) > 0:
                 nodetype = 'weak'
             else:
                 nodetype = 'basic'
         if nodetype != 'basic':
-            for j in range(len(item)-1, -1, -1):
+            for j in range(len(item) - 1, -1, -1):
                 if item[j][0] in foreign_key:
                     item.pop(j)
         # print(table_list[i], primary_key, foreign_key, nodetype, item)
         table_attri['item'] = item
+        # print(item)
         table_attri['type'] = nodetype
         # print(table_attri)
         dict_return.append(table_attri)
@@ -129,8 +132,26 @@ def er():
         #     print(s)
         #     link.add(s)
         # print(foreignkey)
-    print(link)
-    print(dict_return)
+    # print(link)
+    # print(dict_return)
+
+
+    entity_table = []
+    for i in range(len(dict_return)):
+        if dict_return[i]['type'] == 'basic' or dict_return[i]['type'] == 'weak':
+            entity_table.append(dict_return[i]['key'])
+    # link = list(set(link))
+    for i in range(len(link)-1, -1, -1):
+        if (link[i][0] in entity_table) and (link[i][1] in entity_table):
+            # print(link[i])
+            table_attri = {'key': link[i][1] + '_' + link[i][0], 'type': 'mtom', 'item': []}
+            dict_return.append(table_attri)
+            # print(table_attri, [table_attri['key'], link[i][0], 'mtom'], [table_attri['key'], link[i][1], '1to1'])
+            link.append([table_attri['key'], link[i][0], '1tom'])
+            link.append([table_attri['key'], link[i][1], '1to1'])
+            link.pop(i)
+            # print(table_attri)
+    # print(link)
     dic = {}
     dic['link'] = link
     dic['entity'] = dict_return
@@ -142,4 +163,3 @@ def er():
 #                     { name: "ProductName", iskey: false, figure: "Hexagon", color: colors.blue },
 #                     { name: "SupplierID", iskey: false, figure: "Decision", color: "purple" },
 #                     { name: "CategoryID", iskey: false, figure: "Decision", color: "purple" }]}
-

@@ -279,7 +279,7 @@ export default {
 
 <style scoped>
 #my-diagram-div {
-    width: 1250px;
-    height: 800px;
+    width: 1550px;
+    height: 600px;
 }
 </style>

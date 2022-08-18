@@ -15,17 +15,31 @@ const CONTACT_API={
 		// url:'/table'
 		url: '/data/table'
 	},
-	fundtype:{
+	vstable:{
 		method:'post',
-		// url:'/fundtype'
-		url: '/data/type'
+		// url:'/table'
+		url: '/data/vstable'
 	},
-	fundListBytable:{
+	vstable2:{
+		method:'post',
+		// url:'/table'
+		url: '/data/vstable2'
+	},
+	attributeList:{
 		method:'post',
 		// url:'/public/fundListBytable'
 		url: '/data/list'
 	},
-	// 公司平台研究
+	judgepic:{
+		method:'post',
+		// url:'/public/fundListBytable'
+		url: '/data/judgepic'
+	},
+	picdata:{
+		method:'post',
+		// url:'/public/fundListBytable'
+		url: '/data/picdata'
+	},
 
 	sql:{
 		method:'post',

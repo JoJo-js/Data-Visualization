@@ -37,9 +37,9 @@ const routes = [
         component: () => import('../components/emphasis/er.vue'),
       },
         {
-        path: '/emphasis/er1',
-        name: 'er1',
-        component: () => import('../components/emphasis/er1.vue'),
+        path: '/emphasis/visualization',
+        name: 'visualization',
+        component: () => import('../components/emphasis/visualization.vue'),
       },
     ]
   }

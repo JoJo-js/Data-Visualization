@@ -4,7 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ebf4ee69-f621-4d59-b01a-ca3673fe563e" name="Changes" comment="git init 11" />
+    <list default="true" id="ebf4ee69-f621-4d59-b01a-ca3673fe563e" name="Changes" comment="git init 11">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_backend/logs/flaskDemo.log" beforeDir="false" afterPath="$PROJECT_DIR$/research_backend/logs/flaskDemo.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_backend/research/blueprints/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/research_backend/research/blueprints/data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_backend/research/blueprints/performance.py" beforeDir="false" afterPath="$PROJECT_DIR$/research_backend/research/blueprints/performance.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/src/components/emphasis/er.vue" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/components/emphasis/er.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/src/components/emphasis/er1.vue" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/components/emphasis/visualization.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/router/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/src/service/contactApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/service/contactApi.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/src/utlis/echars.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/src/views/Left.vue" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/views/Left.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/vue.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/vue.config.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -47,28 +65,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/wyz/IC/Visualization/web/research_web/src/components/emphasis",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
-    "ts.external.directory.path": "D:\\app1\\PyCharm 2022.1.2\\plugins\\JavaScriptLanguage\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/wyz/IC/Visualization/web/research_web/src/components/emphasis&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\app1\\PyCharm 2022.1.2\\plugins\\JavaScriptLanguage\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "ChangesTree.GroupingKeys": [
-      "repository",
-      "directory"
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: [
+      &quot;repository&quot;,
+      &quot;directory&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\wyz\IC\Visualization\web\research_web\src\components\emphasis" />
@@ -95,7 +113,15 @@
       <workItem from="1657567348276" duration="1909000" />
       <workItem from="1657576402486" duration="17834000" />
       <workItem from="1657726057369" duration="1874000" />
-      <workItem from="1657729723216" duration="261000" />
+      <workItem from="1657729723216" duration="1677000" />
+      <workItem from="1658269932697" duration="620000" />
+      <workItem from="1658271095353" duration="603000" />
+      <workItem from="1658363500882" duration="387000" />
+      <workItem from="1659357092361" duration="11011000" />
+      <workItem from="1659881769627" duration="70532000" />
+      <workItem from="1660297373542" duration="16801000" />
+      <workItem from="1660421621001" duration="58878000" />
+      <workItem from="1660662064695" duration="38668000" />
     </task>
     <servers />
   </component>
@@ -158,5 +184,16 @@
     </ignored-roots>
     <MESSAGE value="git init" />
     <option name="LAST_COMMIT_MESSAGE" value="git init" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/research_backend/research/blueprints/data.py</url>
+          <line>11</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

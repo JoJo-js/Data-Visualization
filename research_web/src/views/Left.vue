@@ -7,7 +7,7 @@
 
               <el-menu-item index="/emphasis/sql" route>SQL</el-menu-item>
               <el-menu-item index="/emphasis/er" route>ER</el-menu-item>
-            <el-menu-item index="/emphasis/er1" route>ER</el-menu-item>
+            <el-menu-item index="/emphasis/visualization" route>Visualization</el-menu-item>
 
           </el-submenu>
 

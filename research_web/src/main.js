@@ -8,10 +8,13 @@ import 'element-ui/lib/theme-chalk/index.css'
 import VueCookies from 'vue-cookies'
 // import echarts from 'echarts'
 import * as echarts from 'echarts'
+import 'echarts-wordcloud'
 import store from './store'
 import gojs from 'gojs'  // 在 main.js 中引入
 
-Vue.prototype.go = gojs  // 挂载
+
+
+Vue.prototype.$go = gojs  // 挂载
 
 Vue.use(VueCookies);
 Vue.prototype.$http=axios; /**全局注册*/
