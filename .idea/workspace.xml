@@ -4,24 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ebf4ee69-f621-4d59-b01a-ca3673fe563e" name="Changes" comment="git init 11">
+    <list default="true" id="ebf4ee69-f621-4d59-b01a-ca3673fe563e" name="Changes" comment="git 818">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_backend/logs/flaskDemo.log" beforeDir="false" afterPath="$PROJECT_DIR$/research_backend/logs/flaskDemo.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/research_backend/research/blueprints/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/research_backend/research/blueprints/data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_backend/research/blueprints/performance.py" beforeDir="false" afterPath="$PROJECT_DIR$/research_backend/research/blueprints/performance.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/src/components/emphasis/er.vue" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/components/emphasis/er.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/src/components/emphasis/er1.vue" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/components/emphasis/visualization.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/router/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/src/service/contactApi.js" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/service/contactApi.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/src/utlis/echars.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/src/views/Left.vue" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/views/Left.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/research_web/vue.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/vue.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/research_web/src/components/emphasis/visualization.vue" beforeDir="false" afterPath="$PROJECT_DIR$/research_web/src/components/emphasis/visualization.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,8 +107,16 @@
       <workItem from="1659881769627" duration="70532000" />
       <workItem from="1660297373542" duration="16801000" />
       <workItem from="1660421621001" duration="58878000" />
-      <workItem from="1660662064695" duration="38668000" />
+      <workItem from="1660662064695" duration="60682000" />
     </task>
+    <task id="LOCAL-00001" summary="git 818">
+      <created>1660830914411</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1660830914412</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -183,17 +177,7 @@
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
     <MESSAGE value="git init" />
-    <option name="LAST_COMMIT_MESSAGE" value="git init" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/research_backend/research/blueprints/data.py</url>
-          <line>11</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="git 818" />
+    <option name="LAST_COMMIT_MESSAGE" value="git 818" />
   </component>
 </project>

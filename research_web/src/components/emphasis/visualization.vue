@@ -31,19 +31,20 @@
       <el-row v-else-if="num_en==='two'">
             <el-form style="text-align:left" :inline="true" :model="searchForm" class="demo-form-inline">
               <DataSelect :fatherMethod="initData" :showtable="false"></DataSelect>
-              <br>
-              <el-form-item label="Table">
+
+              <el-form-item label="Table1">
                 <el-select v-model="table_list" value-key ='id' filterable placeholder="select" @change="tableChange">
                     <el-option v-for="item in tableOptions" :key="item" :label="item" :value="item"></el-option>
                 </el-select>
+                     <b>&nbsp &nbsp &nbsp &nbsp Please choose one data from table2</b>
             </el-form-item>
-              <el-form-item label="Data">
-                <el-select v-model="attr_list" value-key ='id' multiple filterable placeholder="Select" @change = 'mulproduct'>
-                    <el-option v-for="item in attrOptions" :key="item.name" :label="item.name" :value="item.name"></el-option>
-                </el-select>
-            </el-form-item>
+<!--              <el-form-item label="Data">-->
+<!--                <el-select v-model="attr_list" value-key ='id' multiple filterable placeholder="Select" @change = 'mulproduct'>-->
+<!--                    <el-option v-for="item in attrOptions" :key="item.name" :label="item.name" :value="item.name"></el-option>-->
+<!--                </el-select>-->
+<!--            </el-form-item>-->
               <br>
-              <el-form-item label="Table">
+              <el-form-item label="Table2">
                 <el-select v-model="table_list2" value-key ='id' filterable placeholder="select" @change="tableChange2">
                     <el-option v-for="item in tableOptions2" :key="item" :label="item" :value="item"></el-option>
                 </el-select>
@@ -207,9 +208,9 @@ export default {
           this.searchForm.pic_type = ''
           this.judge_pic = []
           if(this.searchForm.table.length > 1){
-            this.searchForm.table[1] = value
+            this.searchForm.table[1] = value.split('(')[0]
           }else{
-            this.searchForm.table.push(value)
+            this.searchForm.table.push(value.split('(')[0])
           }
           let res_table =await this.$httpf.attributeList({"value":value},true)
             if(res_table.code==0){
@@ -245,8 +246,8 @@ export default {
       this.judge_pic = []
       // console.log(this.searchForm.attr)
       value.forEach(e=>{
-            this.searchForm.attr.push(this.table_list2+ '+'+ e)
-            this.attr2.push(this.table_list2+ '+'+ e)
+            this.searchForm.attr.push(this.table_list2.split('(')[0]+ '+'+ e)
+            this.attr2.push(this.table_list2.split('(')[0]+ '+'+ e)
         })
       // console.log(this.searchForm.attr)
     },
@@ -283,12 +284,146 @@ export default {
         this.hierarchy_tree(d)
       }else if(this.searchForm.pic_type=='Line Chart'){
         this.line_chart(d)
+      }else if(this.searchForm.pic_type=='Stacked Bar Chart'){
+        this.stacked_bar_chart(d)
+      }else if(this.searchForm.pic_type=='Grouped Bar Chart'){
+        this.grouped_bar_chart(d)
+      }else if(this.searchForm.pic_type=='Spider Chart'){
+        let draw = this.$echarts.init(document.getElementById('picture'))
+        draw.clear();
+        this.spider_chart(draw, d)
+      }else if(this.searchForm.pic_type=='Sankey Diagram'){
+        this.sankey_diagram(d)
       }
 
     },
 
-    line_chart(data){
-      google.charts.load('current', {packages:['line']});
+    sankey_diagram(data){
+      google.charts.load('current', {packages:['sankey']});
+      var dataTable = new google.visualization.DataTable();
+      dataTable.addColumn('string', data[0][0]);
+      dataTable.addColumn('string', data[0][1]);
+      dataTable.addColumn('number', data[0][2]);
+
+      let d = []
+      data[1].forEach(e=>{
+        d.push([e[0],e[1],e[2]])
+      })
+      if(d.length>20){
+          d = d.slice(0,30)
+        }
+
+      dataTable.addRows(d);
+      // console.log(dataTable)
+      var options = {
+
+    };
+
+      var chart = new google.visualization.Sankey(document.getElementById('picture'));
+      chart.draw(dataTable, options);
+    },
+
+    spider_chart(draw, data){
+      let year = [];
+      let name = [];
+      let value = [];
+      data[1].forEach(e=>{
+          if(!year.includes(e[1])){
+            year.push(e[1])
+          }
+          if(!name.includes(e[0])){
+            name.push(e[0])
+          }
+      })
+      year.sort(function(a,b){return a-b})
+      let ind = []
+      year.forEach(e=>{
+        ind.push({name: e.toString()})
+      })
+      name.forEach(e=>{
+        let v = new Array(year.length)
+        for(let i=0;i<data[1].length;i++){
+          for(let j=0;j<year.length;j++){
+            if(data[1][i][1]==year[j]&&data[1][i][0]==e){
+              v[j] = data[1][i][2]
+            }
+          }
+        }
+        value.push({
+          name: e,
+          value: v
+        })
+      })
+
+      // console.log(x,y)
+      let option = {
+        legend: {
+          data: name
+        },
+        tooltip: {},
+        radar: {
+          // shape: 'circle',
+          indicator: ind
+        },
+        series: [
+          {
+            type: 'radar',
+            data: value
+          }
+        ]
+      };
+
+      draw.setOption(option)
+    },
+
+    grouped_bar_chart(data){
+      google.charts.load('current', {packages: ['corechart', 'bar']});
+
+      var dataTable = new google.visualization.DataTable();
+      dataTable.addColumn('string', data[0][0]);
+      let year = []
+      let name = []
+      data[1].forEach(e=>{
+        if(! year.includes(e[1])){
+          year.push(e[1])
+        }
+        if(! name.includes(e[0])){
+          name.push(e[0])
+        }
+      })
+      let d = []
+      year.sort(function(a,b){return a-b})
+      year.forEach(e=>{
+        dataTable.addColumn('number', e.toString());
+      })
+      name.forEach(e=>{
+        let onedata = new Array(year.length+1)
+        onedata[0] = e
+        for(let j=0;j<year.length;j++){
+          for(let k=0;k<data[1].length;k++){
+            if(data[1][k][1]==year[j] && data[1][k][0]==e){
+              onedata[j+1] = data[1][k][2]
+            }
+          }
+        }
+        d.push(onedata)
+      })
+
+      dataTable.addRows(d);
+      // console.log(dataTable)
+      var options = {
+
+          hAxis: {title: data[0][1]},
+          vAxis: {title: data[0][2]},
+      };
+
+      var chart = new google.charts.Bar(document.getElementById('picture'));
+
+      chart.draw(dataTable, google.charts.Bar.convertOptions(options));
+    },
+
+    stacked_bar_chart(data){
+      google.charts.load("current", {packages:["corechart"]});
 
       var dataTable = new google.visualization.DataTable();
       dataTable.addColumn('string', data[0][1]);
@@ -319,16 +454,65 @@ export default {
       })
 
       dataTable.addRows(d);
-      console.log(dataTable)
+      // console.log(dataTable)
       var options = {
-        chart: {
-          showScale: true,
-        },
+        legend: { position: 'top', maxLines: 3 },
+        bar: { groupWidth: '75%' },
+
+          hAxis: {title: data[0][2]},
+          vAxis: {title: data[0][1]},
+        isStacked: true
       };
 
-      var chart = new google.charts.Line(document.getElementById('picture'));
+      var chart = new google.visualization.BarChart(document.getElementById('picture'));
 
-      chart.draw(dataTable, google.charts.Line.convertOptions(options));
+      chart.draw(dataTable, options);
+    },
+
+    line_chart(data){
+      google.charts.load('current', {packages:['corechart']});
+
+      var dataTable = new google.visualization.DataTable();
+      dataTable.addColumn('string', data[0][1]);
+      let name = []
+      let data0 = [] //year
+      data[1].forEach(e=>{
+        if(! name.includes(e[0])){
+          dataTable.addColumn('number', e[0]);
+          name.push(e[0])
+        }
+        if(! data0.includes(e[1])){
+          data0.push(e[1])
+        }
+      })
+      let d = []
+      data0.sort(function(a,b){return a-b})
+      data0.forEach(e=>{
+        let onedata = new Array(name.length+1)
+        onedata[0] = e.toString()
+        for(let j=0;j<name.length;j++){
+          for(let k=0;k<data[1].length;k++){
+            if(data[1][k][1]==e && data[1][k][0]==name[j]){
+              onedata[j+1] = data[1][k][2]
+            }
+          }
+        }
+        d.push(onedata)
+      })
+
+      dataTable.addRows(d);
+      // console.log(dataTable)
+      var options = {
+
+          hAxis: {title: data[0][1]},
+          vAxis: {title: data[0][2]},
+          showScale: true,
+
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('picture'));
+
+      chart.draw(dataTable, options);
     },
 
     hierarchy_tree(data){
@@ -674,87 +858,3 @@ export default {
   }
 }
 </script>
-
-
-
-
-<!--      d3.select("#pic").selectAll("*").remove();-->
-
-<!--      let myWords = []-->
-<!--      data[1].forEach(e=>{myWords.push({word: e[0], size: e[1]})})-->
-<!--          // [{word: "Running", size: "10"}, {word: "Surfing", size: "20"}, {word: "Climbing", size: "50"}, {word: "Kiting", size: "30"}, {word: "Sailing", size: "20"}, {word: "Snowboarding", size: "60"} ]-->
-
-<!--      // set the dimensions and margins of the graph-->
-<!--      let margin = {top: 10, right: 10, bottom: 10, left: 10},-->
-<!--        width = 800 - margin.left - margin.right,-->
-<!--        height = 500 - margin.top - margin.bottom;-->
-
-<!--      // append the svg object to the body of the page-->
-<!--      let svg = d3.select("#picture").append("svg")-->
-<!--        .attr("width", width + margin.left + margin.right)-->
-<!--        .attr("height", height + margin.top + margin.bottom)-->
-<!--      .append("g")-->
-<!--        .attr("transform",-->
-<!--              "translate(" + margin.left + "," + margin.top + ")");-->
-<!--      let a = d3.rgb(255,0,0);	//红色-->
-<!--      let b = d3.rgb(0,0,255);	//绿色-->
-
-<!--        console.log("++++")-->
-<!--      Math.min.apply(null, data.map(function (e) {-->
-<!--        return e[1]-->
-<!--      }))-->
-
-<!--      let compute = d3.interpolate(a,b);-->
-<!--      let linear = d3.scaleLinear()-->
-<!--				.domain([-->
-<!--            Math.min.apply(null, data.map(function (e) {-->
-<!--              return e[1]})),-->
-<!--            Math.max.apply(null, data.map(function (e) {-->
-<!--              return e[1]}))]-->
-<!--        )-->
-<!--				.range([0,1]);-->
-<!--      // Constructs a new cloud layout instance. It run an algorithm to find the position of words that suits your requirements-->
-<!--      // Wordcloud features that are different from one word to the other must be here-->
-<!--      let layout = d3.layout.cloud()-->
-<!--      .size([width, height])-->
-<!--      .words(myWords.map(function(d) { return {text: d.word, size:d.size}; }))-->
-<!--      .padding(5)        //space between words-->
-<!--      .rotate(function() { return ~~(Math.random() * 2) * 90; })-->
-<!--      .fontSize(function(d) { return d.size; })      // font size of words-->
-<!--      .on("end", draw);-->
-<!--      layout.start();-->
-
-
-<!--      // This function takes the output of 'layout' above and draw the words-->
-<!--      // Wordcloud features that are THE SAME from one word to the other can be here-->
-<!--      function draw(words) {-->
-
-
-<!--      svg-->
-<!--        .append("g")-->
-<!--          .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")-->
-<!--          .selectAll("text")-->
-<!--            .data(words)-->
-<!--          .enter().append("text")-->
-<!--            .style("font-size", function(d) { return linear(d.size); })-->
-<!--            .style("fill", function(d) { return compute(linear(d.size)); })-->
-<!--            .attr("text-anchor", "middle")-->
-<!--            .style("font-family", "Impact")-->
-<!--            .attr("transform", function(d) {-->
-<!--              return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";-->
-<!--            })-->
-<!--            .text(function(d) { return d.text; });-->
-<!--      }-->
-
-
-
-<!--let compute = d3.interpolate(a,b);-->
-<!--      let linear = d3.scaleLinear()-->
-<!--				.domain([-->
-<!--            Math.min.apply(null, data.map(function (e) {-->
-<!--              return e[1]})),-->
-<!--            Math.max.apply(null, data.map(function (e) {-->
-<!--              return e[1]}))]-->
-<!--        )-->
-<!--				.range([0,1]);-->
-<!--function(d) { return compute(linear(d.size)); }-->

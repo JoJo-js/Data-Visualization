@@ -24,6 +24,9 @@ attr_table = {}  # table:attrlist  attrlist={attr:[type,key]}
 weak_table = {}  # table:attrlist  attrlist=[name, type]
 key_ref = {}  # table: [parent, key, parentkey]
 pic_weak = [0]  # [1(weak)2(1tom), parent, weak]
+relation_m2m = [] #{name,link,item}
+tablelist = []
+
 
 
 # 查询基金公司
@@ -121,11 +124,6 @@ def vstable():
         # print(foreign_key, primary_key)
         intersection = list(foreign_key & primary_key)
         if len(isrelation) > 1 and len(intersection) > 0:
-            rela = list(map(lambda x: x[1], isrelation))
-            for c in combinations(rela, 2):
-                d = list(c)
-                d.append('mtom')
-                link.append(d)
                 # print(table_list[i], d)
             if foreign_key.issuperset(primary_key):
                 nodetype = 'mtom'
@@ -139,7 +137,7 @@ def vstable():
                 nodetype = 'weak'
                 entity_dic[table_list[i]] = 'weak'
                 for j in range(len(isrelation)):
-                    link.append([isrelation[j][1], table_list[i], '1tom'])
+                    link.append([isrelation[j][1], table_list[i], '1tom'])  #(parent, weak)
                     # print([isrelation[j][1], table_list[i], '1tom'])
             else:
                 nodetype = 'basic'
@@ -151,6 +149,13 @@ def vstable():
             for j in range(len(item) - 1, -1, -1):
                 if item[j][0] in foreign_key:
                     item.pop(j)
+        if len(isrelation) > 1 and len(intersection) > 0 and len(item) > 0 and primary_key.issuperset(foreign_key) and foreign_key.issuperset(primary_key):
+            rela = list(map(lambda x: x[1], isrelation))
+            for c in combinations(rela, 2):
+                d = list(c)
+                relation_m2m.append({'name': table_list[i], 'link':list(c), 'item':item})
+                d.append('mtom')
+                link.append(d)
         if nodetype == 'weak':
             w = copy.deepcopy(item)
             for j in range(len(w) - 1, -1, -1):
@@ -159,7 +164,6 @@ def vstable():
             weak_table[table_list[i]] = w
         # print(table_list[i], primary_key, foreign_key, nodetype, item)
         table_attri['item'] = item
-        # print(item)
         table_attri['type'] = nodetype
         # print(table_attri)
         dict_return.append(table_attri)
@@ -178,7 +182,7 @@ def vstable():
                 link.pop(j)
     # print(link)
     # print(entity_dic)
-
+    # print(relation_m2m)
     # print(dict_return)
     return success(data=list(entity_dic.keys()))
 
@@ -191,27 +195,56 @@ def vstable2():
     table_list = set()
     for i in range(len(link)):
         if link[i][0] == table:
-            table_list.add(link[i][1])
-        if link[i][1] == table:
-            table_list.add(link[i][0])
+            table_list.add(link[i][1]+'('+link[i][2]+')')
+        # if link[i][1] == table:
+        #     table_list.add(link[i][0]+'('+link[i][2]+')')
     return success(data=list(table_list))
 
 
 @data_bp.route('/list', methods=['POST'])
 def attr_list():
     params = request.form.to_dict()
-    # print(params)
+    print(params)
+    global tablelist
     table = params['value']
-    sql = '''select COLUMN_NAME, DATA_TYPE, COLUMN_KEY from information_schema.columns where table_schema = 'mondial' and table_name = '{}'
-           '''.format(table)
-    result = DbUtil().Select(sql, ('name', 'type', 'key'))
-    a_dic = {}
-    for i in range(len(result)):
-        a_dic[result[i]['name']] = [result[i]['type'], result[i]['key']]
-    attr_table[table] = a_dic
-    for i in range(len(result) - 1, -1, -1):
-        if result[i]['key'] == 'PRI':
-            result.pop(i)
+    if len(tablelist) == 0:
+        tablelist.append(table)
+    elif len(tablelist) == 1 and '(' in table:
+        tablelist.append(table)
+    elif len(tablelist) == 2 and '(' in table:
+        tablelist.pop(-1)
+        tablelist.append(table)
+    else:
+        tablelist = []
+        tablelist.append(table)
+
+    if 'mtom' in table and len(tablelist) == 2:
+        for i in range(len(relation_m2m)):
+            if (tablelist[0] == relation_m2m[i]['link'][0] and table.split('(')[0] == relation_m2m[i]['link'][1]) or (tablelist[0] == relation_m2m[i]['link'][1] and table.split('(')[0] == relation_m2m[i]['link'][0]):
+                table = relation_m2m[i]['name']
+        sql = '''select COLUMN_NAME, DATA_TYPE, COLUMN_KEY from information_schema.columns where table_schema = 'mondial' and table_name = '{}'
+                       '''.format(table)
+        result = DbUtil().Select(sql, ('name', 'type', 'key'))
+        a_dic = {}
+        for i in range(len(result)):
+            a_dic[result[i]['name']] = [result[i]['type'], result[i]['key']]
+        attr_table[table] = a_dic
+        for i in range(len(result) - 1, -1, -1):
+            if result[i]['key'] == 'PRI':
+                result.pop(i)
+    else:
+        if '(' in table:
+            table = table.split('(')[0]
+        sql = '''select COLUMN_NAME, DATA_TYPE, COLUMN_KEY from information_schema.columns where table_schema = 'mondial' and table_name = '{}'
+               '''.format(table)
+        result = DbUtil().Select(sql, ('name', 'type', 'key'))
+        a_dic = {}
+        for i in range(len(result)):
+            a_dic[result[i]['name']] = [result[i]['type'], result[i]['key']]
+        attr_table[table] = a_dic
+        for i in range(len(result) - 1, -1, -1):
+            if result[i]['key'] == 'PRI':
+                result.pop(i)
     # print(result)
     return success(data=result)
 
@@ -263,6 +296,10 @@ def judgepic():
         elif total == 4:
             if numeric >= 3:
                 type.append('Bubble Charts')
+        if len(type) == 0:
+            flag = False
+        if flag == False:
+            type.append('Please choose one to four kinds of valid data')
     else:
         rela = None
         for i in range(len(link)):
@@ -275,6 +312,10 @@ def judgepic():
                 if rela == '1tom':
                     table1 = link[i][0]
                     table2 = link[i][1]
+                if rela == 'mtom':
+                    table1 = table[0]
+                    table2 = table[1]
+
         # print(link)
         # print(rela)
         if rela == 'weak':
@@ -317,11 +358,11 @@ def judgepic():
                 pic_weak[0] = 1
                 pic_weak.append(table1)
                 pic_weak.append(table2)
-            elif numeric == 2 and lexical == 0 and weak_flag:
-                type.append('Line Chart')
-                pic_weak[0] = 1
-                pic_weak.append(table1)
-                pic_weak.append(table2)
+            # elif numeric == 2 and lexical == 0 and weak_flag:
+            #     type.append('Line Chart')
+            #     pic_weak[0] = 1
+            #     pic_weak.append(table1)
+            #     pic_weak.append(table2)
         elif rela == '1tom':
             attr_all = attr_table[table2]
             lexical = 0
@@ -352,11 +393,38 @@ def judgepic():
                 pic_weak[0] = 2
                 pic_weak.append(table1)
                 pic_weak.append(table2)
+        elif rela == 'mtom':
+            table0 = None
+            for i in range(len(relation_m2m)):
+                if (relation_m2m[i]['link'][0] == table[0] and relation_m2m[i]['link'][1] == table[1]) or (
+                        relation_m2m[i]['link'][1] == table[0] and relation_m2m[i]['link'][0] == table[1]):
+                    table0 = relation_m2m[i]['name']
+            attr_all = attr_table[table0]
+            # print(attr_all)
+            lexical = 0
+            numeric = 0
+            for i in range(len(attr)):
+                a = attr[i].split('+')
+                if attr_all[a[1]][0] == 'int' or attr_all[a[1]][0] == 'decimal':
+                    attr_type.append([a[1], 'numeric'])
+                    numeric += 1
+                elif attr_all[a[1]][0] == 'varchar':
+                    attr_type.append([a[1], 'lexical'])
+                    lexical += 1
+                else:
+                    flag = False
+            # print(numeric, lexical)
+            if numeric == 1 and lexical == 0:
+                type.append('Sankey Diagram')
+                type.append('Chord Diagram')
+                pic_weak[0] = 3
+                pic_weak.append(table0)
+        if len(type) == 0:
+            flag = False
+        if flag == False:
+            type.append('Please choose one valid data')
     # print(type)
-    if len(type) == 0:
-        flag = False
-    if flag == False:
-        type.append('Please choose one to four kinds of valid data')
+
     print([flag, type, attr_type])
     return success(data=[flag, type, attr_type])
 
@@ -365,6 +433,7 @@ def judgepic():
 def picdata():
     params = request.form.to_dict()
     print(params)
+    print(pic_weak)
     table = params['table'].split(',')
     attr = params['attr'].split(',')
     result = []
@@ -546,6 +615,35 @@ def picdata():
                     else:
                         onedata.append(result_sql[i][j + len(key1) + len(key2)])
                 result.append(onedata)
+        if pic_weak[0] == 3:
+            for i in range(len(attr)):
+                attr[i] = attr[i].split('+')[1]
+            key = []
+            attr_all = attr_table[pic_weak[1]]
+            for k, v in attr_all.items():
+                if v[1] == 'PRI':
+                    key.append(k)
+            head = head + key + attr
+            sqlin = ', '.join(key + attr)
+            # print(sqlin)
+            sqlnull = []
+            for i in range(len(attr)):
+                sqlnull.append(attr[i] + ' is not null')
+            sqlnull = ' and '.join(sqlnull)
+            sql = '''select {} from {} where {}
+                           '''.format(sqlin, pic_weak[1], sqlnull)
+            # print(sql)
+            result_sql = DbUtil().Select(sql)
+            for i in range(len(result_sql)):
+                onedata = []
+                onedata.append(result_sql[i][0])
+                onedata.append(result_sql[i][1])
+                for j in range(len(attr)):
+                    if attr_all[attr[j]][0] == 'decimal':
+                        onedata.append(float(result_sql[i][j + len(key)]))
+                    else:
+                        onedata.append(result_sql[i][j + len(key)])
+                result.append(onedata)
     print(result)
-    # print(head)
+    print(head)
     return success(data=[head, result])
