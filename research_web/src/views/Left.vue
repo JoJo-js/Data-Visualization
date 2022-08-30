@@ -1,15 +1,16 @@
 <template>
-	<el-aside style="width:15%;border-right: solid 1px #e6e6e6;"> <!-- this.$route.path -->
+	<el-aside style="width:10%;border-right: solid 1px #e6e6e6;"> <!-- this.$route.path -->
         <el-menu router :default-openeds="['1','2','3','4','5']" :default-active="activeIndex" @select="handleSelect">
           
-          <el-submenu index="1">
-              <template slot="title"><i class="el-icon-menu"></i>Database</template>
+<!--          <el-submenu index="1">-->
+<!--              <template slot="title"><i class="el-icon-menu"></i>Database</template>-->
+<!--          <el-menu-item index="/emphasis/sql" route></el-menu-item>-->
+          <h1>Function</h1>
+              <el-menu-item index="/emphasis/sql" route><i class="el-icon-menu"></i>Table</el-menu-item>
+              <el-menu-item index="/emphasis/er" route><i class="el-icon-menu"></i>ER</el-menu-item>
+            <el-menu-item index="/emphasis/visualization" route><i class="el-icon-menu"></i>Visualisation</el-menu-item>
 
-              <el-menu-item index="/emphasis/sql" route>SQL</el-menu-item>
-              <el-menu-item index="/emphasis/er" route>ER</el-menu-item>
-            <el-menu-item index="/emphasis/visualization" route>Visualization</el-menu-item>
-
-          </el-submenu>
+<!--          </el-submenu>-->
 
         </el-menu>
       </el-aside>

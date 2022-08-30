@@ -1,2 +1,0 @@
-settings 中修改数据库配置
-项目执行命令  切换到 research_backend 文件夹下,执行【flask run】 命令

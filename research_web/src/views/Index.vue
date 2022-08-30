@@ -3,7 +3,7 @@
         <bugLeft></bugLeft>
         <el-container :style="styleObject">
           <el-header style="text-align: left; font-size: 20px;position:absolute">
-            <span>Data Visualization</span>
+            <span style="font-weight:bold">Data Visualisation</span>
           </el-header>  
           <el-header style="text-align: right; font-size: 18px">
             <el-dropdown @command="handleCommand">
@@ -43,7 +43,7 @@
     data() {
        return {
           styleObject: {
-            height: '500px',
+            height: '700px',
             border: '1px solid #eee',
           },
           busername:'',
@@ -52,7 +52,7 @@
     },
     mounted:function(){
         var obj = this
-        obj.styleObject.height=window.innerHeight*0.90 + 'px'
+        obj.styleObject.height=window.innerHeight*0.95 + 'px'
         obj.busername = localStorage.getItem('busername');
         // obj.getProjectList()
     },

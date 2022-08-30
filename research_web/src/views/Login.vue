@@ -28,10 +28,10 @@
         width: 100%
     }
     .divForm{
-        position: absolute;/*绝对定位*/
+        position: absolute;
         width: 500px;
         height: 200px;
-        text-align: center;/*(让div中的内容居中)*/
+        text-align: center;
         top: 30%;
         left: 40%;
     }
@@ -78,6 +78,7 @@ export default {
     },
     methods: {
         submitForm() {
+          // console.log(this.ruleForm)
             this.$refs['ruleForm'].validate((valid) => {
                 if (valid) {
                     this.loginPost()
@@ -91,7 +92,7 @@ export default {
             if(res.code==0){
                 this.$cookies.set("token", res.token)
                 localStorage.setItem('busername', res.username);
-                let redirect = decodeURIComponent(this.$route.query.redirect || '/emphasis/sql');
+                let redirect = decodeURIComponent(this.$route.query.redirect || '/index');
                 this.$router.push({ path: redirect })
             }else{
                 this.isShow = true

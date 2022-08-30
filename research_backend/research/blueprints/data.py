@@ -1,21 +1,15 @@
 #!/usr/bin/env python
 # encoding: utf-8
-'''
 
-@Author : bodong
-@contact: wanghc@thwb.com.cn
-@File : data.py
-@Time : 2021/4/29 15:27
-@desc:  基金基础查询蓝图
-'''
 
 from flask import request, current_app, Blueprint
 from research.utils.result_json import success
-from research.utils.db_util import DbUtilWind, DbUtil
+from research.utils.db_util import DbUtil
 import re
 from itertools import combinations
 import copy
 from collections import Counter
+import datetime
 
 data_bp = Blueprint('data', __name__)
 link = []  # [data1,data2,type]
@@ -29,12 +23,11 @@ tablelist = []
 
 
 
-# 查询基金公司
 @data_bp.route('/database', methods=['GET'])
 def database():
     sql = "show databases"
-    companies = DbUtil().Select(sql)
-    database_list = list(map(lambda x: x[0], companies))
+    db = DbUtil().Select(sql)
+    database_list = list(map(lambda x: x[0], db))
     # print(database_list)
     return success(data=database_list)
 
@@ -42,6 +35,8 @@ def database():
 @data_bp.route('/table', methods=['POST'])
 def table():
     params = request.form.to_dict()
+    sql = "use {}".format(params["database_code"])
+    DbUtil().Change(sql)
     # print(params)
     database_code = params["database_code"]
     sql = '''
@@ -50,22 +45,39 @@ def table():
     table = DbUtil().Select(sql)
     # print(table)
     table_list = list(map(lambda x: x[0], table))
+    for i in range(len(table_list)-1,-1,-1):
+        if table_list[i] == 'user_table':
+            table_list.pop(i)
     # print(table_list)
     return success(data=table_list)
 
 
 @data_bp.route('/vstable', methods=['POST'])
 def vstable():
+    global link
+    link = []  # [data1,data2,type]
+    global entity_dic
+    entity_dic = {}  # {name:type}
+    global weak_table
+    weak_table = {}  # table:attrlist  attrlist=[name, type]
+    global key_ref
+    key_ref = {}  # table: [parent, key, parentkey]
+    global relation_m2m
+    relation_m2m = []  # {name,link,item}
     params = request.form.to_dict()
+    print(params)
+    sql = "use {}".format(params["database_code"])
+    DbUtil().Change(sql)
     table = params['database_code']
     dict_return = []
     sql = '''
                    select table_name from information_schema.tables where table_schema='{}'
                   '''.format(table)
+    # print(sql)
     result = DbUtil().Select(sql)
     table_list = list(map(lambda x: x[0], result))
-    if 'fund_user_table' in table_list:
-        table_list.remove('fund_user_table')
+    # print(table_list)
+    if 'located' in table_list:
         table_list.remove('located')
     # print(table_list)
     for i in range(len(table_list)):
@@ -205,6 +217,7 @@ def vstable2():
 def attr_list():
     params = request.form.to_dict()
     print(params)
+    db = params['database']
     global tablelist
     table = params['value']
     if len(tablelist) == 0:
@@ -222,8 +235,8 @@ def attr_list():
         for i in range(len(relation_m2m)):
             if (tablelist[0] == relation_m2m[i]['link'][0] and table.split('(')[0] == relation_m2m[i]['link'][1]) or (tablelist[0] == relation_m2m[i]['link'][1] and table.split('(')[0] == relation_m2m[i]['link'][0]):
                 table = relation_m2m[i]['name']
-        sql = '''select COLUMN_NAME, DATA_TYPE, COLUMN_KEY from information_schema.columns where table_schema = 'mondial' and table_name = '{}'
-                       '''.format(table)
+        sql = '''select COLUMN_NAME, DATA_TYPE, COLUMN_KEY from information_schema.columns where table_schema = '{}' and table_name = '{}'
+                       '''.format(db, table)
         result = DbUtil().Select(sql, ('name', 'type', 'key'))
         a_dic = {}
         for i in range(len(result)):
@@ -235,8 +248,8 @@ def attr_list():
     else:
         if '(' in table:
             table = table.split('(')[0]
-        sql = '''select COLUMN_NAME, DATA_TYPE, COLUMN_KEY from information_schema.columns where table_schema = 'mondial' and table_name = '{}'
-               '''.format(table)
+        sql = '''select COLUMN_NAME, DATA_TYPE, COLUMN_KEY from information_schema.columns where table_schema = '{}' and table_name = '{}'
+               '''.format(db, table)
         result = DbUtil().Select(sql, ('name', 'type', 'key'))
         a_dic = {}
         for i in range(len(result)):
@@ -270,6 +283,7 @@ def judgepic():
         lexical = 0
         numeric = 0
         for i in range(len(attr)):
+            # print(attr_all[attr[i]][0])
             if attr_all[attr[i]][0] == 'int' or attr_all[attr[i]][0] == 'decimal':
                 attr_type.append([attr[i], 'numeric'])
                 numeric += 1
@@ -291,7 +305,7 @@ def judgepic():
             if numeric == 3:
                 type.append('Bubble Charts')
                 type.append('Scatter Diagram')
-            if lexical == 1:
+            elif lexical == 1:
                 type.append('Scatter Diagram')
         elif total == 4:
             if numeric >= 3:
@@ -299,7 +313,7 @@ def judgepic():
         if len(type) == 0:
             flag = False
         if flag == False:
-            type.append('Please choose one to four kinds of valid data')
+            type = ('Please choose one to four kinds of valid data')
     else:
         rela = None
         for i in range(len(link)):
@@ -384,7 +398,7 @@ def judgepic():
             if numeric == 1 and lexical == 0:
                 type.append('Tree Map')
                 type.append('Hierarchy Tree')
-                type.append('Circle Packing')
+                # type.append('Circle Packing')
                 pic_weak[0] = 2
                 pic_weak.append(table1)
                 pic_weak.append(table2)
@@ -416,13 +430,13 @@ def judgepic():
             # print(numeric, lexical)
             if numeric == 1 and lexical == 0:
                 type.append('Sankey Diagram')
-                type.append('Chord Diagram')
+                # type.append('Chord Diagram')
                 pic_weak[0] = 3
                 pic_weak.append(table0)
         if len(type) == 0:
             flag = False
         if flag == False:
-            type.append('Please choose one valid data')
+            type = ('Please choose one valid data')
     # print(type)
 
     print([flag, type, attr_type])
@@ -454,19 +468,27 @@ def picdata():
         for i in range(len(attr)):
             sqlnull.append(attr[i] + ' is not null')
         sqlnull = ' and '.join(sqlnull)
-        sql = '''select {} from {} where {}
+        sql = '''select {} from {} where {} limit 300
                '''.format(sqlin, table[0], sqlnull)
+        # print(sql)
         result_sql = DbUtil().Select(sql)
-        # print(result_sql)
+        # print(result_sql[:5])
         for i in range(len(result_sql)):
             onedata = []
-            strkey = ' '.join(result_sql[i][:len(key)])
+            sql_one = list(result_sql[i])
+            if len(key) > 1:
+                for j in range(len(key)):
+                    sql_one[j] = str(sql_one[j])
+            if len(key) > 1:
+                strkey = ' '.join(sql_one[:len(key)])
+            else:
+                strkey = sql_one[0]
             onedata.append(strkey)
             for j in range(len(attr)):
                 if attr_all[attr[j]][0] == 'decimal':
-                    onedata.append(float(result_sql[i][j + len(key)]))
+                    onedata.append(float(sql_one[j + len(key)]))
                 else:
-                    onedata.append(result_sql[i][j + len(key)])
+                    onedata.append(sql_one[j + len(key)])
             result.append(onedata)
     else:
         # print(pic_weak)
@@ -509,34 +531,42 @@ def picdata():
             for i in range(len(attr)):
                 sqlnull.append(attr[i] + ' is not null')
             sqlnull = ' and '.join(sqlnull)
-            sql = '''select {} from {} join {} on {} where {}
+            sql = '''select {} from {} join {} on {} where {} limit 10000
                            '''.format(sqlin, pic_weak[1], pic_weak[2], sqlon, sqlnull)
             # print(sql)
             result_sql = DbUtil().Select(sql)
-            # print(result_sql)
+            # print(result_sql[:5])
             result_mid = []
             for i in range(len(result_sql)):
                 onedata = []
-                strkey = ' '.join(result_sql[i][:len(key1)])
-                onedata.append(strkey)
-                if type(result_sql[i][len(key1)]) != 'str':
-                    strkey = int(result_sql[i][len(key1)])
+                sqlone = result_sql[i]
+                if len(key1) > 1:
+                    strkey = ' '.join(sqlone[:len(key1)])
                 else:
-                    strkey = ' '.join(result_sql[i][len(key1):len(key1) + len(key2)])
+                    strkey = str(sqlone[0])
+                onedata.append(strkey)
+                if not isinstance(sqlone[len(key1)], str):
+                    if isinstance(sqlone[len(key1)], datetime.date):
+                        strkey = str(sqlone[len(key1)])
+                    else:
+                        strkey = int(sqlone[len(key1)])
+                else:
+                    strkey = ' '.join(sqlone[len(key1):len(key1) + len(key2)])
                 onedata.append(strkey)
                 for j in range(len(attr)):
                     if attr_table[pic_weak[2]][attr[j].split('.')[1]][0] == 'decimal':
-                        onedata.append(float(result_sql[i][j + len(key1) + len(key2)]))
+                        onedata.append(float(sqlone[j + len(key1) + len(key2)]))
                     else:
-                        onedata.append(result_sql[i][j + len(key1) + len(key2)])
+                        onedata.append(sqlone[j + len(key1) + len(key2)])
                 result_mid.append(onedata)
             # print(result_mid[:10])
             result_mid1 = [i[1] for i in result_mid]
             limit_num = 10
             count = Counter(result_mid1).most_common(limit_num)
-            for i in range(len(count)-1,-1,-1):
-                if count[i][0] % 10 !=0:
-                    count.pop(i)
+            if not (isinstance(count[0][0],str)):
+                for i in range(len(count)-1,-1,-1):
+                    if count[i][0] % 10 !=0:
+                        count.pop(i)
             # print(count)
             count1 = {}
             for i in range(len(result_mid)):
@@ -549,6 +579,13 @@ def picdata():
 
             # print(count1)
             key1_ok = []
+            if count[0][1]<10:
+                for k, v in count1.items():
+                    if v > 4:
+                        key1_ok.append(k)
+                    if len(key1_ok) == 10:
+                        break
+
             for k, v in count1.items():
                 if v == len(count):
                     key1_ok.append(k)
@@ -644,6 +681,6 @@ def picdata():
                     else:
                         onedata.append(result_sql[i][j + len(key)])
                 result.append(onedata)
-    print(result)
+    print(result[:5])
     print(head)
     return success(data=[head, result])

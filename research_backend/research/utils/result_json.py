@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-'''
 
-@Author : bodong
-@contact: bod@glsc.com.cn
-@File : result_json.py 
-@Time : 2021/4/27 9:44
-@desc:  
-'''
 from flask import json
 from research.utils.enum_status import Status
 import decimal

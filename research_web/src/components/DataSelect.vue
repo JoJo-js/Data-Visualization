@@ -48,7 +48,7 @@ export default {
         async getdatabase(){
             let res =await this.$httpf.database()
             if(res.code==0){
-                this.$store.commit('fundOperate',{"value":res.data, "type":"databaseOptions"})
+                this.$store.commit('table',{"value":res.data, "type":"databaseOptions"})
             }
         },
         async databaseChange(value){
@@ -56,8 +56,8 @@ export default {
             let res =await this.$httpf.table({"database_code":value},true)
             if(res.code==0){
                 // this.tableOptions = res.data
-                 this.$store.commit('fundOperate',{"value":res.data, "type":"tableOptions"})
-                 this.$store.commit('platform',{"value":value, "type":"database"})
+                 this.$store.commit('table',{"value":res.data, "type":"tableOptions"})
+                 this.$store.commit('database',{"value":value, "type":"database"})
             }
             if(this.showtable == false && this.fatherMethod){
                 this.fatherMethod();
@@ -65,7 +65,7 @@ export default {
             
         },
         async tableChange(value){
-            this.$store.commit('platform',{"value":value, "type":"table"})
+            this.$store.commit('database',{"value":value, "type":"table"})
             if (this.fatherMethod) {
                 this.fatherMethod();
             }

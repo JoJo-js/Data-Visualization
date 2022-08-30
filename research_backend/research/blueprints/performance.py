@@ -1,11 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-'''
-@File : performance.py 
-@Time : 2021/5/18 17:59
-@desc:  业绩概论
-'''
-# from WindPy import w
 import time
 from decimal import Decimal
 from flask import request, Blueprint
@@ -13,7 +7,6 @@ from research.utils.result_json import success
 from research.utils.db_util import DbUtil
 import re
 import pandas as pd
-from research.utils import constant
 
 performance_bp = Blueprint('performance', __name__)
 
@@ -23,36 +16,39 @@ def sql():
     params = request.form.to_dict()
     table = params['table']
     dict_return = {}
-    fund_sql = '''
+    sql = '''
                   select * from {} limit 10 
                '''.format(table)
-    result = DbUtil().Select(fund_sql)
+    result = DbUtil().Select(sql)
     rr = list(result)
     sql = '''
             show columns from {}
     '''.format(table)
     result = DbUtil().Select(sql)
     header = list(map(lambda x: x[0], result))
-    print(header)
+    # print(header)
     # dict_return.append(table)
     for i in range(len(header)):
         dict_return[header[i]] = list(map(lambda x: x[i], rr))
-    print(dict_return)
+    # print(dict_return)
     return success(data=dict_return)
 
 
 @performance_bp.route('/er', methods=['POST'])
 def er():
     params = request.form.to_dict()
-    table = params['database']
+    print(params)
+    sql = "use {}".format(params["database"])
+    DbUtil().Change(sql)
+    db = params['database']
     dict_return = []
     sql = '''
                select table_name from information_schema.tables where table_schema='{}'
-              '''.format(table)
+              '''.format(db)
     result = DbUtil().Select(sql)
     table_list = list(map(lambda x: x[0], result))
-    if 'fund_user_table' in table_list:
-        table_list.remove('fund_user_table')
+    # print(table_list)
+    if 'located' in table_list:
         table_list.remove('located')
     link = []
     # print(table_list)

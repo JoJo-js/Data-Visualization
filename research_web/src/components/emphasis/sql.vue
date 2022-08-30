@@ -6,11 +6,10 @@
         </el-form>
 
       <el-row v-if="searchForm.table">
+        <h1>Just show 10 data</h1>
               <el-table :data="tableData" border stripe style="width: 100%" :row-style="{height: '0'}" @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"> </el-table-column>
-                <el-table-column v-for="header in headerData" :prop="header.param" :key="header.label" :label="header.label" :width="header.width" header-align="center" align="center">
-
-            </el-table-column>
+                <el-table-column v-for="header in headerData" :prop="header.param" :key="header.label" :label="header.label" :width="header.width" header-align="center" align="center"></el-table-column>
               </el-table>
         </el-row>
 
@@ -39,16 +38,16 @@ export default {
       fundOptions: [],
       chartData:[],
       searchForm:{
-          database:this.$store.state.database,
-          table:this.$store.state.table
+          database:"",
+          table:""
       },
       headerData:[],
       tableData:[],
     }
   },
   mounted(){
-    if(this.$store.state.database)
-        this.sql()
+    this.$store.state.database = ''
+    this.$store.state.table = ''
   },
   methods: {
       initData(){
@@ -74,7 +73,7 @@ export default {
                 this.tableData.push(kk)
               }
               // console.log(this.headerData)
-              console.log(this.tableData)
+              // console.log(this.headerData,this.tableData)
             }
 
         },

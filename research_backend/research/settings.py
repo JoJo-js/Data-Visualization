@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-'''
-
-@Author : bodong
-@File : settings.py 
-@Time : 2021/3/25 9:52
-@desc:  
-'''
 
 import os
 import sys
@@ -36,29 +29,16 @@ class BaseConfig(object):
 
 
 class DevelopmentConfig(BaseConfig):
-    FUNDS_DIALECT = 'mysql'
-    FUNDS_DRIVER = 'pymysql'
-    FUNDS_USERNAME = 'root'
-    FUNDS_PASSWORD = 'root'
-    FUNDS_HOST = '127.0.0.1'
-    FUNDS_PORT = '3306'
-    FUNDS_DATABASE = 'mondial'
+    DB_DIALECT = 'mysql'
+    DB_DRIVER = 'pymysql'
+    DB_USERNAME = 'root'
+    DB_PASSWORD = 'root'
+    DB_HOST = '127.0.0.1'
+    DB_PORT = '3306'
+    DB_DATABASE = 'website'
 
-    WIND_DIALECT = 'mysql'
-    WIND_DRIVER = 'pymysql'
-    WIND_USERNAME = 'readuser'
-    WIND_PASSWORD = 'user123'
-    WIND_HOST = 'windfof2014.mysql.rds.aliyuncs.com'
-    WIND_PORT = '3306'
-    WIND_DATABASE = 'wind'
-
-    SQLALCHEMY_DATABASE_URI = "{}+{}://{}:{}@{}:{}/{}?charset=utf8".format(FUNDS_DIALECT, FUNDS_DRIVER, FUNDS_USERNAME,
-                                                               FUNDS_PASSWORD, FUNDS_HOST, FUNDS_PORT, FUNDS_DATABASE)
-
-    SQLALCHEMY_BINDS = {
-        'wind': "{}+{}://{}:{}@{}:{}/{}?charset=utf8".format(WIND_DIALECT,  WIND_DRIVER,  WIND_USERNAME,
-                                                             WIND_PASSWORD,  WIND_HOST,  WIND_PORT,  WIND_DATABASE)
-    }
+    SQLALCHEMY_DATABASE_URI = "{}+{}://{}:{}@{}:{}/{}?charset=utf8".format(DB_DIALECT, DB_DRIVER, DB_USERNAME,
+                                                               DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE)
 
     LEVEL = "INFO"
 

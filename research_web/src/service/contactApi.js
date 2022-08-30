@@ -1,4 +1,4 @@
-// api 管理文件
+
 const CONTACT_API={
 	login:{
 		method:'post',
@@ -56,4 +56,4 @@ const CONTACT_API={
 
 	
 }
-export default CONTACT_API  //导出  外面才能引用
+export default CONTACT_API

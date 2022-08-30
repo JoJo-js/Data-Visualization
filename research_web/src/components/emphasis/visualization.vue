@@ -4,16 +4,17 @@
       <p></p>
       <div>
         <input type="radio" id="one" value="one" v-model="num_en" @change="numChange">
-        <label for="one">Choose One Table</label>
+        <label for="one">Choose One Table (bar chart, would clouds, scatter diagram or bubble chart)</label>
         <br>
         <input type="radio" id="two" value="two" v-model="num_en" @change="numChange">
-        <label for="two">Choose Two Tables</label>
+        <label for="two">Choose Two Tables (line chart, stacked/grouped bar chart, spider chart, tree map, hierarchy tree or sankey diagram )</label>
         <br>
       </div>
       <p></p>
       <el-row v-if="num_en==='one'">
             <el-form style="text-align:left" :inline="true" :model="searchForm" class="demo-form-inline">
-              <DataSelect :fatherMethod="initData" :showtable="false"></DataSelect>
+              <DataSelect :fatherMethod="visualization" :showtable="false"></DataSelect>
+              <b style="line-height: 40px">&nbsp &nbsp &nbsp &nbsp Please select one to four valid data (no more than one lexical data)</b>
               <br>
               <el-form-item label="Table">
                 <el-select v-model="table_list" value-key ='id' filterable placeholder="select" @change="tableChange">
@@ -22,7 +23,7 @@
             </el-form-item>
               <el-form-item label="Data">
                 <el-select v-model="attr_list" value-key ='id' multiple filterable placeholder="Select" @change = 'mulproduct'>
-                    <el-option v-for="item in attrOptions" :key="item.name" :label="item.name" :value="item.name"></el-option>
+                    <el-option v-for="item in attrOptions" :key="item.name" :label="item.name+' ('+item.type+')'" :value="item.name"></el-option>
                 </el-select>
             </el-form-item>
               <el-button type="primary" @click="attributeChange">Submit</el-button>
@@ -30,14 +31,14 @@
         </el-row>
       <el-row v-else-if="num_en==='two'">
             <el-form style="text-align:left" :inline="true" :model="searchForm" class="demo-form-inline">
-              <DataSelect :fatherMethod="initData" :showtable="false"></DataSelect>
+              <DataSelect :fatherMethod="visualization" :showtable="false"></DataSelect>
 
               <el-form-item label="Table1">
                 <el-select v-model="table_list" value-key ='id' filterable placeholder="select" @change="tableChange">
                     <el-option v-for="item in tableOptions" :key="item" :label="item" :value="item"></el-option>
                 </el-select>
-                     <b>&nbsp &nbsp &nbsp &nbsp Please choose one data from table2</b>
             </el-form-item>
+              <b style="line-height: 40px">&nbsp &nbsp &nbsp &nbsp Please select one numeric data</b>
 <!--              <el-form-item label="Data">-->
 <!--                <el-select v-model="attr_list" value-key ='id' multiple filterable placeholder="Select" @change = 'mulproduct'>-->
 <!--                    <el-option v-for="item in attrOptions" :key="item.name" :label="item.name" :value="item.name"></el-option>-->
@@ -51,7 +52,7 @@
             </el-form-item>
               <el-form-item label="Data">
                 <el-select v-model="attr_list2" value-key ='id' multiple filterable placeholder="Select" @change = 'mulproduct2'>
-                    <el-option v-for="item in attrOptions2" :key="item.name" :label="item.name" :value="item.name"></el-option>
+                    <el-option v-for="item in attrOptions2" :key="item.name" :label="item.name+' ('+item.type+')'" :value="item.name"></el-option>
                 </el-select>
             </el-form-item>
               <el-button type="primary" @click="attributeChange">Submit</el-button>
@@ -73,9 +74,10 @@
       </div>
       <p></p>
       <el-row v-if="searchForm.pic_type">
-        <div v-if="searchForm.table.length===1" style="text-align:center"> <h1>{{this.searchForm.table[0]}}</h1></div>
-        <div v-if="searchForm.table.length===2" style="text-align:center"> <h1>{{this.searchForm.table[0]}} and {{this.searchForm.table[1]}}</h1></div>
-          <el-col :span="23"><div id="picture" :style="{width: '100%', height: '500px',display : 'block'}"></div></el-col>
+        <div v-if="searchForm.table.length===1" style="text-align:center"> <h2>{{this.searchForm.table[0]}}</h2></div>
+        <div v-if="searchForm.table.length===2" style="text-align:center"> <h2>{{this.searchForm.table[0]}} and {{this.searchForm.table[1]}}</h2></div>
+        <div v-if="data_limit" style="text-align:center"> <h1>{{data_limit}}</h1></div>
+          <el-col :span="23"><div id="picture" :style="{ align:' center ',width: '100%', height: '500px',display : 'block'}"></div></el-col>
 
         </el-row>
     </div>
@@ -104,7 +106,7 @@ export default {
       title: "visualization",
       chartData:[],
       searchForm:{
-          database:this.$store.state.database,
+          database:"",
           table:[],
           attr:[],
           pic_type:""
@@ -116,6 +118,7 @@ export default {
       attr1:[],
       attr2:[],
       table_list:'',
+      data_limit:'',
       attr_list2:[],
       table_list2:'',
       tableOptions: [],
@@ -126,7 +129,8 @@ export default {
     }
   },
   mounted(){
-        this.initData()
+    this.$store.state.database = ''
+    this.$store.state.database = ''
   },
   methods: {
     initData(){
@@ -145,14 +149,17 @@ export default {
         this.searchForm.table = []
         this.searchForm.attr = []
         this.searchForm.pic_type = ''
-        this.visualization()
+        // this.visualization()
     },
 
 
     async visualization(){
           this.searchForm.database = this.$store.state.database
           let res =await this.$httpf.vstable({"database_code":this.searchForm.database},true)
-          this.tableOptions = res.data
+          if(res.code==0){
+
+              this.tableOptions = res.data
+          }
 
           // this.searchForm.table = this.$store.state.table
           // this.attrOptions = this.searchForm.table
@@ -187,7 +194,8 @@ export default {
         this.searchForm.pic_type = ''
         this.judge_pic = []
         this.searchForm.table.push(value)
-        let res_table =await this.$httpf.attributeList({"value":value},true)
+        let res_table =await this.$httpf.attributeList({"value":value,"database":this.searchForm.database},true)
+      console.log(res_table)
           if(res_table.code==0){
               this.attrOptions = res_table.data
               // res_table.data.forEach(e =>{
@@ -212,7 +220,8 @@ export default {
           }else{
             this.searchForm.table.push(value.split('(')[0])
           }
-          let res_table =await this.$httpf.attributeList({"value":value},true)
+          let res_table =await this.$httpf.attributeList({"value":value,"database":this.searchForm.database},true)
+
             if(res_table.code==0){
                 this.attrOptions2 = res_table.data
                 // res_table.data.forEach(e =>{
@@ -266,6 +275,7 @@ export default {
 
     async create_picture(d){
       // console.log(d)
+      this.data_limit = ''
       if(this.searchForm.pic_type=='Bar Chart'){
         let draw = this.$echarts.init(document.getElementById('picture'))
         draw.clear();
@@ -309,8 +319,9 @@ export default {
       data[1].forEach(e=>{
         d.push([e[0],e[1],e[2]])
       })
-      if(d.length>20){
+      if(d.length>30){
           d = d.slice(0,30)
+        this.data_limit = 'Just show 30 instances'
         }
 
       dataTable.addRows(d);
@@ -319,7 +330,7 @@ export default {
 
     };
 
-      var chart = new google.visualization.Sankey(document.getElementById('picture'));
+      let chart = new google.visualization.Sankey(document.getElementById('picture'));
       chart.draw(dataTable, options);
     },
 
@@ -354,9 +365,12 @@ export default {
           value: v
         })
       })
+      if(name.length==10){
+        this.data_limit = 'Just show 10 instances'
+      }
 
       // console.log(x,y)
-      let option = {
+      var option = {
         legend: {
           data: name
         },
@@ -408,6 +422,12 @@ export default {
         }
         d.push(onedata)
       })
+      if(d.length==10){
+        this.data_limit = 'Just show 10 instances'
+      }
+
+      // console.log(dataTable)
+      // console.log(d)
 
       dataTable.addRows(d);
       // console.log(dataTable)
@@ -417,7 +437,7 @@ export default {
           vAxis: {title: data[0][2]},
       };
 
-      var chart = new google.charts.Bar(document.getElementById('picture'));
+      let chart = new google.charts.Bar(document.getElementById('picture'));
 
       chart.draw(dataTable, google.charts.Bar.convertOptions(options));
     },
@@ -452,6 +472,10 @@ export default {
         }
         d.push(onedata)
       })
+      if(d[0].length==11){
+        this.data_limit = 'Just show 10 instances'
+      }
+      // console.log(d)
 
       dataTable.addRows(d);
       // console.log(dataTable)
@@ -464,7 +488,7 @@ export default {
         isStacked: true
       };
 
-      var chart = new google.visualization.BarChart(document.getElementById('picture'));
+      let chart = new google.visualization.BarChart(document.getElementById('picture'));
 
       chart.draw(dataTable, options);
     },
@@ -499,6 +523,9 @@ export default {
         }
         d.push(onedata)
       })
+      if(d[0].length == 11){
+        this.data_limit = 'Just show 10 instances'
+      }
 
       dataTable.addRows(d);
       // console.log(dataTable)
@@ -510,7 +537,7 @@ export default {
 
       };
 
-      var chart = new google.visualization.LineChart(document.getElementById('picture'));
+      let chart = new google.visualization.LineChart(document.getElementById('picture'));
 
       chart.draw(dataTable, options);
     },
@@ -520,7 +547,7 @@ export default {
 
           // [ ['Phrases'],
           //   ['cats are better than dogs'],
-      let dataTable = new google.visualization.DataTable();
+      var dataTable = new google.visualization.DataTable();
         dataTable.addColumn('string', data[0][0]);
         dataTable.addColumn('number', data[0][2]);
         let d = []
@@ -539,7 +566,7 @@ export default {
         };
         // console.log(options)
 
-        var chart = new google.visualization.WordTree(document.getElementById('picture'));
+        let chart = new google.visualization.WordTree(document.getElementById('picture'));
         chart.draw(dataTable, options);
 
     },
@@ -550,7 +577,7 @@ export default {
           // ['Location', 'Parent', 'Market trade volume (size)', 'Market increase/decrease (color)'],
           // ['Global',    null,                 0,                               0],
 
-      let dataTable = new google.visualization.DataTable();
+      var dataTable = new google.visualization.DataTable();
         dataTable.addColumn('string', data[0][0]);
         dataTable.addColumn('string', data[0][1]);
         dataTable.addColumn('number', data[0][2]);
@@ -674,7 +701,7 @@ export default {
       }
 
 
-        var chart = new google.visualization.BubbleChart(document.getElementById('picture'));
+        let chart = new google.visualization.BubbleChart(document.getElementById('picture'));
         chart.draw(dataTable, options);
 
 
@@ -759,7 +786,7 @@ export default {
         }
 
 
-        var chart = new google.visualization.BubbleChart(document.getElementById('picture'));
+        let chart = new google.visualization.BubbleChart(document.getElementById('picture'));
         chart.draw(dataTable, options);
 
     },
@@ -778,20 +805,21 @@ export default {
         })
         if(x.length>100){
           x = x.slice(0,100)
+          this.data_limit = 'Just show 100 instances'
         }
         let option = {
           series: [{
-              type: 'wordCloud',//类型
-              sizeRange: [15, 60],// data 中的值将映射到的文本大小范围，默认为最小12px，最大60px。
-              rotationRange: [-90, 90],//文本旋转范围[-90,90]
-              rotationStep: 45,//旋转步长
-              gridSize: 8,//每个词的间距
-              shape: 'circle',//词云形状，默认circle，可选参数cardioid 、 diamond 、 triangle-forward 、 triangle 、 star
+              type: 'wordCloud',
+              sizeRange: [15, 60],
+              rotationRange: [-90, 90],
+              rotationStep: 45,
+              gridSize: 8,
+              shape: 'circle',
               width: '100%',
               height: '100%',
-              //drawOutOfBound ：是否允许词云在边界外渲染，直接使用默认参数 false 就可以，否则容易造成词重叠。
+
               textStyle: {
-                      //随机颜色
+
                       color: function () {
                           return 'rgb(' + [
                               Math.round(Math.random() * 160),
@@ -802,7 +830,7 @@ export default {
                       }
 
               },
-              data: x,//数据源[]
+              data: x,
             // {name: 'Farrah Abraham',
             // value: 366}
           }]
@@ -818,6 +846,7 @@ export default {
       })
       if(x.length>30){
         x = x.slice(0,30)
+        this.data_limit = 'Just show 30 instances'
       }
       data[1].forEach(e=>{
           y.push(e[1])

@@ -5,23 +5,6 @@
             <DataSelect :fatherMethod="initData" :showtable="false"></DataSelect>
         </el-form>
 
-<!--      <el-row v-if="searchForm.table">-->
-<!--              <el-table :data="tableData" border stripe style="width: 100%" :row-style="{height: '0'}" @selection-change="handleSelectionChange">-->
-<!--                <el-table-column type="selection" width="55"> </el-table-column>-->
-<!--                <el-table-column v-for="header in headerData" :prop="header.param" :key="header.label" :label="header.label" :width="header.width" header-align="center" align="center">-->
-
-<!--            </el-table-column>-->
-<!--              </el-table>-->
-<!--        </el-row>-->
-
-<!--        <el-row v-if="searchForm.database">-->
-<!--            <el-col :span="1"><el-checkbox  style="float:left;" true-label="er" false-label="remove_er"  @change="checkboxChange">Select</el-checkbox></el-col>-->
-<!--            <el-col :span="23"><div id="er" :style="{width: '100%', height: '500px',display : 'block'}"></div></el-col>-->
-<!--        </el-row>-->
-<!--        <el-row v-if="searchForm.database">-->
-<!--            <el-col :span="1"><el-checkbox  style="float:left;" true-label="erstockstar3" false-label="remove_erstockstar3"  @change="checkboxChange">Select</el-checkbox></el-col>-->
-<!--            <el-col :span="23"><div id="erstockstar3" :style="{width: '100%', height: '500px',display : 'block'}"></div></el-col>-->
-<!--        </el-row>-->
       <div id="my-diagram-div"></div>
         <div></div>
     </div>
@@ -41,16 +24,17 @@ export default {
       fundOptions: [],
       chartData:[],
       searchForm:{
-          database:this.$store.state.database,
-          table:this.$store.state.table
+          database:"",
+          table:""
       },
       headerData:[],
       tableData:[],
+      myDiagram:{}
     }
   },
   mounted(){
-    if(this.$store.state.database)
-        this.er()
+    this.$store.state.database = ''
+    this.$store.state.table = ''
   },
   methods: {
       initData(){
@@ -83,8 +67,8 @@ export default {
               link = res_table.data['link']
 
               // console.log(this.headerData)
-              console.log(node)
-              console.log(link)
+              // console.log(node)
+              // console.log(link)
             }
             var nodeDataArray = []
             for(var i=0;i<node.length;i++){
@@ -118,6 +102,7 @@ export default {
                 })
             }
             // console.log(link)
+
             var linkDataArray = []
             for(var i=0;i<link.length;i++){
               if(link[i][2] == '1tom'){
@@ -132,9 +117,13 @@ export default {
             //     { from: "Products", to: "Categories", text: "0..N", toText: "1" },
             //     { from: "Order Details", to: "Products", text: "0..N", toText: "1" }
             // ];
+        if(this.myDiagram){
 
+          this.myDiagram.div = null
+        }
             let $ = go.GraphObject.make; // for conciseness in defining templates
-            let myDiagram = $(
+
+            this.myDiagram = $(
                 go.Diagram,
                 "my-diagram-div", // id挂载dome节点
                 {
@@ -162,7 +151,7 @@ export default {
                 );
 
             // define the Node template, representing an entity
-            myDiagram.nodeTemplate =
+            this.myDiagram.nodeTemplate =
                 $(go.Node, "Auto",  // the whole node panel
                     {
                         selectionAdorned: true,
@@ -214,7 +203,7 @@ export default {
                 );  // end Node
 
             // define the Link template, representing a relationship
-            myDiagram.linkTemplate =
+            this.myDiagram.linkTemplate =
                 $(go.Link,  // the whole link panel
                     {
                         selectionAdorned: true,
@@ -250,7 +239,7 @@ export default {
 
             // create the model for the E-R diagram
 
-            myDiagram.model = $(go.GraphLinksModel,
+            this.myDiagram.model = $(go.GraphLinksModel,
                 {
                     copiesArrays: true,
                     copiesArrayObjects: true,
@@ -279,7 +268,7 @@ export default {
 
 <style scoped>
 #my-diagram-div {
-    width: 1550px;
-    height: 600px;
+    width: 100%;
+    height: 650px;
 }
 </style>

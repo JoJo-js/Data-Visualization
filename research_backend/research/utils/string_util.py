@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-'''
 
-@Author : bodong
-@contact: wanghc@thwb.com.cn
-@File : string_util.py 
-@Time : 2021/3/31 15:13
-@desc:  
-'''
 
 from uuid import uuid4
 import time, base64, hmac
@@ -23,22 +16,17 @@ def verify_password(login_password, mine_password):  # 验证密码方法
     return pwd_context.verify(login_password, mine_password)
 
 
-# 密钥，可随意修改
 SECRET_KEY = 'abcdefghijklmm'
 
 def sync():
     return ""
 
 
-# 生成token, 有效时间为60min
 def generate_auth_token(user_id, expiration=3600*10):
-    # 第一个参数是内部私钥
-    # 第二个参数是有效期（秒）
     s = Serializer(SECRET_KEY, expires_in=expiration)
     return str(s.dumps({"user_id": user_id}), 'utf-8')
 
 
-# 验证token
 def verify_auth_token(token):
     s = Serializer(SECRET_KEY)
     data = s.loads(token)
@@ -46,7 +34,6 @@ def verify_auth_token(token):
 
 
 
-# 生成token
 def generate_token(key, expire=3600):
     ts_str = str(time.time() + expire)
     ts_byte = ts_str.encode("utf-8")
@@ -56,7 +43,6 @@ def generate_token(key, expire=3600):
     return b64_token.decode("utf-8")
 
 
-# 验证token
 def certify_token(key, token):
     token_str = base64.urlsafe_b64decode(token).decode('utf-8')
     token_list = token_str.split(':')

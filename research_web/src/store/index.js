@@ -13,7 +13,6 @@ const store = new Vuex.Store({
     databaseOptions:[]
   },
 
-  // 只能执行同步操作
   mutations: {
     addCount: function(state, payload){
         state.count += payload.num 
@@ -24,7 +23,7 @@ const store = new Vuex.Store({
     decrement: function(state){
         state.count--
     },
-    fundOperate:function(state, payload){
+    table:function(state, payload){
         if(payload.type == 'table'){
             state.table = payload.value
         }else if(payload.type == 'database'){
@@ -35,7 +34,7 @@ const store = new Vuex.Store({
             state.databaseOptions = payload.value
         }
     },
-    platform: function(state, payload){
+    database: function(state, payload){
         if(payload.type == 'table'){
             state.table = payload.value
         }else{
@@ -71,35 +70,19 @@ const store = new Vuex.Store({
       }
   },
 
-  //异步执行
   actions:{
     incrementAsync: function(context, payload){
         console.log(context.state)
         console.log(context.getters)
         return new Promise((resolve, reject) => {
-            // 延迟1秒执行
             setTimeout(() => {
-                // 提交mutation
                 context.commit('increment', payload)
-                // 成功，继续执行
-                resolve('异步执行结束')
+                resolve('async finished')
             }, 1000)
         })
     }
   }
 
-
-//   actions: {
-//     incrementAsync (context, payload) {
-//       console.log(context.state)
-//       console.log(context.getters)
-
-//       // 延迟1秒执行
-//       setTimeout(() => {
-//         context.commit('increment', payload)
-//       }, 1000)
-//     }
-//   }
 
 })
 
